@@ -18,7 +18,7 @@ Microsoft doesn't make an official OneDrive client for Linux. MountyPathon fills
 
 | File | What it does |
 |------|-------------|
-| `mountypathon.py` | CLI for managing the OneDrive mount |
+| `mountypathon.bash` | Shell function for managing the OneDrive mount |
 | `rclone-onedrive.service` | systemd user service for auto-mounting |
 
 ---
@@ -84,10 +84,16 @@ systemctl --user enable --now rclone-onedrive.service
 
 ### 5. Install MountyPathon
 
+Add the shell function to your shell config:
+
+**Option A — source the file** (replace `/path/to` with the actual directory):
+
 ```bash
-cp mountypathon.py ~/.local/bin/mountypathon
-chmod +x ~/.local/bin/mountypathon
+echo 'source /path/to/mountypathon.bash' >> ~/.bashrc   # or ~/.zshrc
+source ~/.bashrc
 ```
+
+**Option B — paste directly** into your `~/.bashrc` / `~/.zshrc` and run `source ~/.bashrc`.
 
 ---
 
@@ -98,12 +104,12 @@ mountypathon status    # check if mounted
 mountypathon start     # mount
 mountypathon stop      # unmount
 mountypathon restart   # remount
-mountypathon logs      # tail the rclone journal
+mountypathon logs      # tail the rclone journal (live follow)
 mountypathon doctor    # service state, mount health, cache size, remote reachability
 mountypathon reauth    # reconnect OneDrive OAuth (token expired or revoked)
 ```
 
-> **Why Python?** This could have been a 10-line bash script, or even an alias — `alias mountypathon='systemctl --user'`. But then it couldn't be called **MountyPathon**. You can't make a Monty Python reference in bash. Well, you can. But it really doesn't DRIVE the point home.
+> **Why Bash?** A shell function in your `.bashrc`/`.zshrc` is the sweet spot — simpler than a script file, no installation needed, no `chmod`, no `~/.local/bin` path setup. `&&`/`||` gives actual success/failure feedback, and `status` checks both the service and the mount point (they can disagree after a crash).
 
 ---
 
