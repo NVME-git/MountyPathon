@@ -1,15 +1,27 @@
 [Unit]
 Description=rclone OneDrive mount
+Wants=network-online.target
 After=network-online.target
 
 [Service]
+Environment=RCLONE_CONFIG_PASS=
+ExecStartPre=/bin/mkdir -p %h/OneDrive
 ExecStart=rclone mount onedrive: %h/OneDrive \
   --vfs-cache-mode full \
   --vfs-cache-max-size 5G \
   --dir-cache-time 24h \
-  --poll-interval 15s
+  --poll-interval 1m \
+  --vfs-read-chunk-size 128M \
+  --buffer-size 256M \
+  --attr-timeout 1s \
+  --log-level INFO \
+  --syslog
+ExecStartPost=/bin/sh -c 'until mountpoint -q %h/OneDrive; do sleep 0.2; done'
 ExecStop=/bin/fusermount3 -u %h/OneDrive
 Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
 
 [Install]
 WantedBy=default.target
