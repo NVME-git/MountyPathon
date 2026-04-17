@@ -64,15 +64,7 @@ rclone lsd onedrive:
 
 ---
 
-### 3. Create the mount point
-
-```bash
-mkdir ~/OneDrive
-```
-
----
-
-### 4. Install the systemd service
+### 3. Install the systemd service
 
 ```bash
 mkdir -p ~/.config/systemd/user

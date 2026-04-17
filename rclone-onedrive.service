@@ -17,7 +17,7 @@ ExecStart=rclone mount onedrive: %h/OneDrive \
   --log-level INFO \
   --syslog
 ExecStartPost=/bin/sh -c 'until mountpoint -q %h/OneDrive; do sleep 0.2; done'
-ExecStop=/bin/fusermount3 -u %h/OneDrive
+ExecStop=/usr/bin/fusermount3 -u %h/OneDrive
 Restart=on-failure
 RestartSec=5
 NoNewPrivileges=true
