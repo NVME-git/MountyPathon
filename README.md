@@ -172,6 +172,10 @@ Not by default. Two places data lands on disk:
 
 If someone gets local access to your Linux user account, both the OneDrive credentials and cached files are readable.
 
+**Why can't I use `sudo systemctl --user`?**
+
+User services run in your user's session bus (`$DBUS_SESSION_BUS_ADDRESS`). `sudo` drops into a root environment that has no access to it. Always manage user services as your own user — no `sudo` needed or supported.
+
 ---
 
 ## Troubleshooting
@@ -200,6 +204,15 @@ fusermount3 -uz ~/OneDrive
 ```bash
 mountypathon restart
 ```
+
+**`mount failed: Operation not permitted`**
+
+Two service hardening options are incompatible with FUSE mounts:
+
+- `NoNewPrivileges=true` — blocks setuid execution. `fusermount3` is setuid and needs to temporarily elevate to set up the FUSE mount. This silently breaks it.
+- `PrivateTmp=true` — creates a private mount namespace for the service. The kernel blocks FUSE mount creation outside that namespace (i.e. in `~/OneDrive`).
+
+Neither can be used in a service that runs `rclone mount`.
 
 **Checking rclone logs**
 
